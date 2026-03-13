@@ -61,5 +61,6 @@ export const deleteAnggota = catchAsync(async (req, res) => {
     const err = customErr("Anggota tidak ditemukan", 404);
     throw err;
   }
-  return res.status(204).json({ success: true, data });
+  const newRecord = await getById(id);
+  return res.status(200).json({ success: true, newRecord });
 });

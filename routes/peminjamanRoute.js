@@ -1,5 +1,11 @@
 import express from "express";
-import {} from "../controllers/peminjamaController.js";
+import {
+  getPeminjaman,
+  getPeminjamanById,
+  createPeminjaman,
+  returnPeminjaman,
+  cekPeminjamanTerlambat,
+} from "../controllers/peminjamanController.js";
 const peminjamanRouter = express.Router();
 peminjamanRouter.get("/", getPeminjaman);
 peminjamanRouter.get("/:id", getPeminjamanById);

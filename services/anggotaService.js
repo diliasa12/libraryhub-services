@@ -11,6 +11,9 @@ export async function getById(id) {
 }
 export async function getRiwayat(id) {
   const data = await Peminjaman.find({ id_anggota: id }).populate("id_anggota");
+  if (data.length === 0) {
+    return null;
+  }
   return data;
 }
 export async function add(content) {
@@ -32,7 +35,7 @@ export async function deleteById(id) {
   if (!anggota) {
     return null;
   }
-  await Anggota.updateOne({ _id: id }, { $set: { status: nonaktif } });
+  await Anggota.updateOne({ _id: id }, { $set: { status: "nonaktif" } });
   const newrecord = Anggota.findById(id);
   return newrecord;
 }

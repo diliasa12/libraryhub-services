@@ -1,6 +1,6 @@
-import Anggota from "../models/Anggota";
-import Buku from "../models/Buku";
-import Peminjaman from "../models/Peminjaman";
+import Anggota from "../models/Anggota.js";
+import Buku from "../models/Buku.js";
+import Peminjaman from "../models/Peminjaman.js";
 export async function getAll() {
   const data = await Peminjaman.find();
   if (data.length === 0) {
