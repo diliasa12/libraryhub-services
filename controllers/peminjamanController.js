@@ -10,7 +10,7 @@ import catchAsync from "../utils/catchAsync.js";
 import { customErr } from "../utils/customErr.js";
 
 export const getPeminjaman = catchAsync(async (req, res) => {
-  const { status } = req.params;
+  const { status } = req.query;
   let data;
   if (status) {
     data = await getTerlambat();
@@ -38,6 +38,7 @@ export const getPeminjamanById = catchAsync(async (req, res) => {
 });
 export const createPeminjaman = catchAsync(async (req, res) => {
   const content = req.body;
+
   const data = await add(content);
   if (!data) {
     const err = customErr("Gagal membuat peminjaman", 400);
@@ -47,7 +48,9 @@ export const createPeminjaman = catchAsync(async (req, res) => {
 });
 export const returnPeminjaman = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const data = await kembali(id);
+  const { tgl_kembali_aktual: tanggalKembaliAktual } = req.body;
+  console.log(tanggalKembaliAktual);
+  const data = await kembali(id, tanggalKembaliAktual);
   if (!data) {
     const err = customErr("Gagal mengembalikan buku", 400);
     throw err;

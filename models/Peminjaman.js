@@ -12,7 +12,21 @@ const PeminjamanSchema = new mongoose.Schema(
       required: true,
     },
     tgl_pinjam: { type: Date, default: Date.now },
-    tgl_kembali_rencana: { type: Date, required: true }, // +7 hari dari tgl_pinjam
+    tgl_kembali_rencana: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function (value) {
+          const tgl_pinjam = new Date(this.tgl_pinjam);
+          const expected = new Date(tgl_pinjam);
+          expected.setDate(tgl_pinjam.getDate() + 7);
+
+          // bandingkan hanya tanggalnya (tanpa jam)
+          return value.toDateString() === expected.toDateString();
+        },
+        message: "Tanggal kembali harus 7 hari setelah tanggal pinjam",
+      },
+    }, // +7 hari dari tgl_pinjam
     tgl_kembali_aktual: { type: Date },
     status: {
       type: String,
