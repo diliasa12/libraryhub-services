@@ -36,6 +36,7 @@ export const getPeminjamanById = catchAsync(async (req, res) => {
   }
   return res.status(200).json(data);
 });
+
 export const createPeminjaman = catchAsync(async (req, res) => {
   const content = req.body;
 

@@ -2,14 +2,18 @@ import Anggota from "../models/Anggota.js";
 import Buku from "../models/Buku.js";
 import Peminjaman from "../models/Peminjaman.js";
 export async function getAll() {
-  const data = await Peminjaman.find();
+  const data = await Peminjaman.find()
+    .populate("id_buku")
+    .populate("id_anggota");
   if (data.length === 0) {
     return null;
   }
   return data;
 }
 export async function getById(id) {
-  const data = await Peminjaman.findById(id);
+  const data = await Peminjaman.findById(id)
+    .populate("id_buku")
+    .populate("id_anggota");
   if (data.length === 0) {
     return null;
   }
@@ -19,7 +23,7 @@ export async function getTerlambat() {
   const data = await Peminjaman.find({
     status: "terlambat",
   });
-  console.log(data);
+
   if (data.length === 0) {
     return null;
   }
@@ -29,25 +33,39 @@ export async function getTerlambat() {
 export async function add(content) {
   const buku = await Buku.findById(content.id_buku);
   const anggota = await Anggota.findById(content.id_anggota);
-  console.log(anggota.status);
-  if (anggota.status === "nonaktif") {
+  let stokBuku = buku.stok;
+
+  if (
+    anggota.status === "nonaktif" ||
+    buku.isDelete === true ||
+    buku.tersedia == false
+  ) {
     return null;
   }
-  const temp = buku.stok;
-  if (temp <= 0) return null;
 
-  await Buku.updateOne({ _id: buku._id }, { $set: { stok: temp - 1 } });
+  await Buku.updateOne({ _id: buku._id }, { $set: { stok: stokBuku - 1 } });
+
+  const newBuku = await Buku.findById(content.id_buku);
+  if (newBuku.stok === 0) {
+    await Buku.updateOne({ _id: buku._id }, { $set: { tersedia: false } });
+  }
+
   const data = await Peminjaman.create(content);
   return data;
 }
+
 export async function kembali(id, tanggalKembaliAktual) {
-  const peminjaman = await getById(id);
+  const peminjaman = await Peminjaman.findById(id);
+  console.log(peminjaman);
   if (
     !peminjaman ||
     peminjaman.status === "dikembalikan" ||
     peminjaman.status === "terlambat"
   )
     return null;
+
+  const anggota = await Anggota.findById(peminjaman.id_anggota);
+  const buku = await Buku.findById(peminjaman.id_buku);
 
   const tanggalAktual = new Date(tanggalKembaliAktual);
 
@@ -56,16 +74,15 @@ export async function kembali(id, tanggalKembaliAktual) {
     { $set: { tgl_kembali_aktual: tanggalAktual } },
   );
 
-  const peminjamanUpdate = await getById(id);
+  const peminjamanUpdate = await Peminjaman.findById(id);
   const hariTerlambat = Math.floor(
-    (peminjamanUpdate.tgl_kembali_rencana -
-      peminjamanUpdate.tgl_kembali_aktual) /
+    (peminjamanUpdate.tgl_kembali_aktual -
+      peminjamanUpdate.tgl_kembali_rencana) /
       (1000 * 60 * 60 * 24),
   );
 
   const denda = hariTerlambat * 2000;
-  console.log(hariTerlambat);
-  console.log(denda);
+
   if (hariTerlambat > 0) {
     await Peminjaman.updateOne(peminjamanUpdate, {
       $set: {
@@ -82,17 +99,26 @@ export async function kembali(id, tanggalKembaliAktual) {
     });
   }
 
+  let incPoin = anggota.poin + 1;
+  let incStok = buku.stok;
   await Anggota.findByIdAndUpdate(
     { _id: peminjaman.id_anggota },
     {
-      $set: { poin: poin + 1 },
+      $set: { poin: incPoin + 1 },
     },
   );
   await Buku.findByIdAndUpdate(
     { _id: peminjaman.id_buku },
-    { $set: { stok: stok + 1 } },
+    { $set: { stok: incStok + 1 } },
   );
-  const data = await getById(id);
+
+  const newBuku = await Buku.findById(peminjaman.id_buku);
+  console.log(newBuku);
+  if (newBuku.tersedia === false) {
+    console.log("masuk");
+    await Buku.findByIdAndUpdate(newBuku._id, { $set: { tersedia: true } });
+  }
+  const data = await Buku.findById(newBuku._id);
   return data;
 }
 

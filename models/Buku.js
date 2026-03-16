@@ -25,5 +25,5 @@ const BukuSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-const Buku = new mongoose.model("books", BukuSchema);
+const Buku = mongoose.model("books", BukuSchema);
 export default Buku;

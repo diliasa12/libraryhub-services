@@ -11,5 +11,5 @@ const AnggotaSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-const Anggota = new mongoose.model("members", AnggotaSchema);
+const Anggota = mongoose.model("members", AnggotaSchema);
 export default Anggota;

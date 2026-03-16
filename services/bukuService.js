@@ -34,7 +34,7 @@ export async function updateById(id, content) {
   return newRecord;
 }
 export async function deleteById(id) {
-  const buku = await Buku.findByid(id);
+  const buku = await Buku.findById(id);
   if (buku.tersedia === false) {
     return null;
   }

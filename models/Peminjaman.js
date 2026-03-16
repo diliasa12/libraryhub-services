@@ -3,12 +3,12 @@ const PeminjamanSchema = new mongoose.Schema(
   {
     id_buku: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Buku",
+      ref: "books",
       required: true,
     },
     id_anggota: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Anggota",
+      ref: "members",
       required: true,
     },
     tgl_pinjam: { type: Date, default: Date.now },
@@ -26,7 +26,7 @@ const PeminjamanSchema = new mongoose.Schema(
         },
         message: "Tanggal kembali harus 7 hari setelah tanggal pinjam",
       },
-    }, // +7 hari dari tgl_pinjam
+    },
     tgl_kembali_aktual: { type: Date },
     status: {
       type: String,
@@ -37,5 +37,5 @@ const PeminjamanSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-const Peminjaman = new mongoose.model("borrows", PeminjamanSchema);
+const Peminjaman = mongoose.model("borrows", PeminjamanSchema);
 export default Peminjaman;

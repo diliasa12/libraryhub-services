@@ -3,12 +3,12 @@ const ReviewSchema = new mongoose.Schema(
   {
     id_buku: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Buku",
+      ref: "books",
       required: true,
     },
     id_anggota: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Anggota",
+      ref: "members",
       required: true,
     },
     rating: { type: Number, min: 1, max: 5, required: true },
@@ -20,5 +20,5 @@ const ReviewSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-const Review = new mongoose.model("reviews", ReviewSchema);
+const Review = mongoose.model("Reviews", ReviewSchema);
 export default Review;
