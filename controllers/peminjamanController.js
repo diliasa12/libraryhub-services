@@ -5,6 +5,7 @@ import {
   add,
   cekTerlambat,
   kembali,
+  getRekomendasi,
 } from "../services/peminjamanService.js";
 import catchAsync from "../utils/catchAsync.js";
 import { customErr } from "../utils/customErr.js";
@@ -65,4 +66,19 @@ export const cekPeminjamanTerlambat = catchAsync(async (req, res) => {
     throw err;
   }
   return res.status(200).json(data);
+});
+export const getRekomendasiBuku = catchAsync(async (req, res) => {
+  const { id } = req.query;
+  if (!id) {
+    const err = customErr("dibutuhkan id anggota", 404);
+    throw err;
+  }
+
+  const data = await getRekomendasi(id);
+  if (!data) {
+    const err = customErr("tidak ada rekomendasi", 404);
+    throw err;
+  }
+
+  return res.status(200).json({ success: true, data });
 });

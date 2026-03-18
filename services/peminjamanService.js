@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Anggota from "../models/Anggota.js";
 import Buku from "../models/Buku.js";
 import Peminjaman from "../models/Peminjaman.js";
@@ -134,4 +135,90 @@ export async function cekTerlambat() {
   }
   const data = await Peminjaman.find({ status: "terlambat" });
   return data;
+}
+
+export async function getRekomendasi(id_anggota) {
+  console.log("masuk");
+  const genreFavorit = await Peminjaman.aggregate([
+    {
+      $match: {
+        id_anggota: new mongoose.Types.ObjectId(id_anggota),
+      },
+    },
+    {
+      $lookup: {
+        from: "books",
+        localField: "id_buku",
+        foreignField: "_id",
+        as: "buku",
+      },
+    },
+    {
+      $unwind: "$buku",
+    },
+    {
+      $group: {
+        _id: "$buku.genre",
+        total: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { total: -1 },
+    },
+    { $limit: 1 },
+  ]);
+  if (genreFavorit.length === 0) return null;
+  const genre = genreFavorit[0]._id;
+  console.log(genre);
+  const bukuDipinjam = await Peminjaman.find({
+    id_anggota: new mongoose.Types.ObjectId(id_anggota),
+  }).distinct("id_buku");
+  const rekomendasi = await Buku.aggregate([
+    {
+      $match: {
+        genre: genre,
+        isDelete: false,
+        tersedia: true,
+        _id: { $nin: bukuDipinjam },
+      },
+    },
+    {
+      $lookup: {
+        from: "borrows",
+        localField: "_id",
+        foreignField: "id_buku",
+        as: "riwayat",
+      },
+    },
+    {
+      $addFields: {
+        totalDipinjam: {
+          $size: { $ifNull: ["$riwayat", []] },
+        },
+      },
+    },
+    {
+      $sort: {
+        totalDipinjam: -1,
+      },
+    },
+    { $limit: 10 },
+    {
+      $project: {
+        _id: 1,
+        isbn: 1,
+        judul: 1,
+        pengarang: 1,
+        penerbit: 1,
+        genre: 1,
+        stok: 1,
+        totalDipinjam: 1,
+      },
+    },
+  ]);
+  if (rekomendasi.length === 0) return null;
+  return {
+    genreFavorit: genre,
+    rekomendasi,
+  };
 }
