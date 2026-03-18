@@ -12,9 +12,13 @@ import {
 import { customErr } from "../utils/customErr.js";
 
 export const getAllBooks = catchAsync(async (req, res) => {
-  const { genre, search } = req.query;
+  const { genre, search, page, limit } = req.query;
+  if (!page || !limit) {
+    const err = customErr("page atau limit dibutuhkan", 400);
+    throw err;
+  }
   if (genre) {
-    const dataGenre = await getByGenre(genre);
+    const dataGenre = await getByGenre(genre, page, limit);
     if (dataGenre.length === 0) {
       const err = customErr("Book doesn't exist", 404);
       throw err;
@@ -25,7 +29,7 @@ export const getAllBooks = catchAsync(async (req, res) => {
     let filter = {};
     const regex = new RegExp(search, "i");
     filter.judul = regex;
-    const result = await getBySearch(filter);
+    const result = await getBySearch(filter, page, limit);
 
     if (result.length === 0) {
       const err = customErr("Book doesn't exist", 404);
@@ -34,7 +38,7 @@ export const getAllBooks = catchAsync(async (req, res) => {
     return res.status(200).send({ success: true, result });
   }
 
-  const data = await getAll();
+  const data = await getAll(page, limit);
 
   if (data.length === 0) {
     const err = customErr("Empty list of books", 404);

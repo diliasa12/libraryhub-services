@@ -2,8 +2,11 @@ import mongoose from "mongoose";
 import Anggota from "../models/Anggota.js";
 import Buku from "../models/Buku.js";
 import Peminjaman from "../models/Peminjaman.js";
-export async function getAll() {
+export async function getAll(page, limit) {
+  const skip = (page - 1) * limit;
   const data = await Peminjaman.find()
+    .skip(skip)
+    .limit(limit)
     .populate("id_buku")
     .populate("id_anggota");
   if (data.length === 0) {
@@ -20,10 +23,13 @@ export async function getById(id) {
   }
   return data;
 }
-export async function getTerlambat() {
+export async function getTerlambat(page, limit) {
+  const skip = (page - 1) * limit;
   const data = await Peminjaman.find({
     status: "terlambat",
-  });
+  })
+    .skip(skip)
+    .limit(limit);
 
   if (data.length === 0) {
     return null;

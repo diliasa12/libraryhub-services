@@ -11,16 +11,20 @@ import catchAsync from "../utils/catchAsync.js";
 import { customErr } from "../utils/customErr.js";
 
 export const getPeminjaman = catchAsync(async (req, res) => {
-  const { status } = req.query;
+  const { status, page, limit } = req.query;
+  if (!page || !limit) {
+    const err = customErr("Page atau limit dibutuhkan", 400);
+    throw err;
+  }
   let data;
   if (status) {
-    data = await getTerlambat();
+    data = await getTerlambat(page, limit);
     if (!data) {
       const err = customErr("Tidak ada peminjaman yang terlambat", 404);
       throw err;
     }
   } else {
-    data = await getAll();
+    data = await getAll(page, limit);
     if (!data) {
       const err = customErr("Tidak ada peminjaman", 404);
       throw err;

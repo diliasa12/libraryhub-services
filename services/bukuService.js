@@ -1,7 +1,8 @@
 import Buku from "../models/Buku.js";
 import Peminjaman from "../models/Peminjaman.js";
-export async function getAll() {
-  const data = await Buku.find();
+export async function getAll(page, limit) {
+  const skip = (page - 1) * limit;
+  const data = await Buku.find().skip(skip).limit(limit);
   return data;
 }
 
@@ -10,12 +11,14 @@ export async function getById(id) {
   return data;
 }
 
-export async function getByGenre(genre) {
-  const data = await Buku.find({ genre });
+export async function getByGenre(genre, page, limit) {
+  const skip = (page - 1) * limit;
+  const data = await Buku.find({ genre }).skip(skip).limit(limit);
   return data;
 }
-export async function getBySearch(filter) {
-  const data = await Buku.find(filter);
+export async function getBySearch(filter, page, limit) {
+  const skip = (page - 1) * limit;
+  const data = await Buku.find(filter).skip(skip).limit(limit);
   return data;
 }
 export async function getReviewFromBookId(id) {
