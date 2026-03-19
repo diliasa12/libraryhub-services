@@ -153,22 +153,19 @@ async function seed() {
       Buku.deleteMany({}),
       Anggota.deleteMany({}),
       Peminjaman.deleteMany({}),
-      Review.deleteMany({}), // ✅ tambahkan
+      Review.deleteMany({}),
     ]);
     console.log("Data lama dihapus");
 
-    // ✅ Insert buku & anggota dulu
     const buku = await Buku.insertMany(bukuData);
     const anggota = await Anggota.insertMany(anggotaData);
     console.log(`${buku.length} buku berhasil ditambahkan`);
     console.log(`${anggota.length} anggota berhasil ditambahkan`);
 
-    // ✅ today & nextWeek didefinisikan sebelum peminjamanData
     const today = new Date();
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + 7);
 
-    // ✅ peminjamanData pakai hasil insert buku & anggota
     const peminjamanData = [
       {
         id_buku: buku[0]._id,
@@ -215,20 +212,20 @@ async function seed() {
 
     const reviewData = [
       {
-        id_buku: buku[2]._id, // The Great Gatsby — dikembalikan Ahmad
-        id_anggota: anggota[2]._id, // Ahmad
+        id_buku: buku[2]._id,
+        id_anggota: anggota[2]._id,
         rating: 4,
         komentar: "Cerita yang sangat menarik dan klasik!",
       },
       {
-        id_buku: buku[0]._id, // Clean Code — terlambat Ahmad
-        id_anggota: anggota[2]._id, // Ahmad
+        id_buku: buku[0]._id,
+        id_anggota: anggota[2]._id,
         rating: 5,
         komentar: "Wajib dibaca untuk semua programmer!",
       },
       {
-        id_buku: buku[4]._id, // Sapiens — dikembalikan Rizky
-        id_anggota: anggota[4]._id, // Rizky
+        id_buku: buku[4]._id,
+        id_anggota: anggota[4]._id,
         rating: 5,
         komentar: "Buku yang membuka wawasan tentang sejarah manusia.",
       },
