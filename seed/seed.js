@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Buku from "../models/Buku.js";
 import Anggota from "../models/Anggota.js";
 import Peminjaman from "../models/Peminjaman.js";
+import Review from "../models/Review.js";
 
 const bukuData = [
   {
@@ -145,45 +146,47 @@ const anggotaData = [
 async function seed() {
   try {
     await mongoose.connect("mongodb://127.0.0.1/perpus");
-    console.log("✅ Connected to MongoDB");
+    console.log("Connected to MongoDB");
 
     // Hapus data lama
     await Promise.all([
       Buku.deleteMany({}),
       Anggota.deleteMany({}),
       Peminjaman.deleteMany({}),
+      Review.deleteMany({}), // ✅ tambahkan
     ]);
-    console.log("🗑️  Data lama dihapus");
+    console.log("Data lama dihapus");
 
-    // Insert data baru
+    // ✅ Insert buku & anggota dulu
     const buku = await Buku.insertMany(bukuData);
     const anggota = await Anggota.insertMany(anggotaData);
-    console.log(`📚 ${buku.length} buku berhasil ditambahkan`);
-    console.log(`👤 ${anggota.length} anggota berhasil ditambahkan`);
+    console.log(`${buku.length} buku berhasil ditambahkan`);
+    console.log(`${anggota.length} anggota berhasil ditambahkan`);
 
-    // Buat data peminjaman dummy
+    // ✅ today & nextWeek didefinisikan sebelum peminjamanData
     const today = new Date();
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + 7);
 
+    // ✅ peminjamanData pakai hasil insert buku & anggota
     const peminjamanData = [
       {
-        id_buku: buku[0]._id, // Clean Code
-        id_anggota: anggota[0]._id, // Budi
+        id_buku: buku[0]._id,
+        id_anggota: anggota[0]._id,
         tgl_pinjam: today,
         tgl_kembali_rencana: nextWeek,
         status: "dipinjam",
       },
       {
-        id_buku: buku[1]._id, // Design Patterns
-        id_anggota: anggota[1]._id, // Siti
+        id_buku: buku[1]._id,
+        id_anggota: anggota[1]._id,
         tgl_pinjam: today,
         tgl_kembali_rencana: nextWeek,
         status: "dipinjam",
       },
       {
-        id_buku: buku[2]._id, // The Great Gatsby
-        id_anggota: anggota[2]._id, // Ahmad
+        id_buku: buku[2]._id,
+        id_anggota: anggota[2]._id,
         tgl_pinjam: new Date("2024-01-01"),
         tgl_kembali_rencana: new Date("2024-01-08"),
         tgl_kembali_aktual: new Date("2024-01-08"),
@@ -191,8 +194,8 @@ async function seed() {
         denda: 0,
       },
       {
-        id_buku: buku[0]._id, // Clean Code (dipinjam lagi)
-        id_anggota: anggota[2]._id, // Ahmad
+        id_buku: buku[0]._id,
+        id_anggota: anggota[2]._id,
         tgl_pinjam: new Date("2024-02-01"),
         tgl_kembali_rencana: new Date("2024-02-08"),
         tgl_kembali_aktual: new Date("2024-02-15"),
@@ -200,8 +203,8 @@ async function seed() {
         denda: 14000,
       },
       {
-        id_buku: buku[4]._id, // Sapiens
-        id_anggota: anggota[4]._id, // Rizky
+        id_buku: buku[4]._id,
+        id_anggota: anggota[4]._id,
         tgl_pinjam: new Date("2024-03-01"),
         tgl_kembali_rencana: new Date("2024-03-08"),
         tgl_kembali_aktual: new Date("2024-03-08"),
@@ -210,13 +213,37 @@ async function seed() {
       },
     ];
 
-    const peminjaman = await Peminjaman.insertMany(peminjamanData);
-    console.log(`📋 ${peminjaman.length} peminjaman berhasil ditambahkan`);
+    const reviewData = [
+      {
+        id_buku: buku[2]._id, // The Great Gatsby — dikembalikan Ahmad
+        id_anggota: anggota[2]._id, // Ahmad
+        rating: 4,
+        komentar: "Cerita yang sangat menarik dan klasik!",
+      },
+      {
+        id_buku: buku[0]._id, // Clean Code — terlambat Ahmad
+        id_anggota: anggota[2]._id, // Ahmad
+        rating: 5,
+        komentar: "Wajib dibaca untuk semua programmer!",
+      },
+      {
+        id_buku: buku[4]._id, // Sapiens — dikembalikan Rizky
+        id_anggota: anggota[4]._id, // Rizky
+        rating: 5,
+        komentar: "Buku yang membuka wawasan tentang sejarah manusia.",
+      },
+    ];
 
-    console.log("🌱 Seeding selesai!");
+    const peminjaman = await Peminjaman.insertMany(peminjamanData);
+    console.log(`${peminjaman.length} peminjaman berhasil ditambahkan`);
+
+    const review = await Review.insertMany(reviewData);
+    console.log(`${review.length} review berhasil ditambahkan`);
+
+    console.log("Seeding selesai!");
     process.exit(0);
   } catch (err) {
-    console.error("❌ Seeding gagal:", err.message);
+    console.error("Seeding gagal:", err.message);
     process.exit(1);
   }
 }

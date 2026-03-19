@@ -23,7 +23,7 @@ export const getAllBooks = catchAsync(async (req, res) => {
       const err = customErr("Book doesn't exist", 404);
       throw err;
     }
-    return res.status(200).send({ success: true, dataGenre });
+    return res.status(200).json({ success: true, dataGenre });
   }
   if (search) {
     let filter = {};
@@ -44,7 +44,7 @@ export const getAllBooks = catchAsync(async (req, res) => {
     const err = customErr("Empty list of books", 404);
     throw err;
   }
-  return res.status(200).send({ success: true, data });
+  return res.status(200).json({ success: true, data });
 });
 export const getBookById = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -53,16 +53,18 @@ export const getBookById = catchAsync(async (req, res) => {
     const err = customErr("Book doesn't exist", 404);
     throw err;
   }
-  res.status(200).send({ success: true, data });
+  res.status(200).json({ success: true, data });
 });
 export const getBookReview = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const data = getReviewFromBookId(id);
+  console.log(id);
+  const data = await getReviewFromBookId(id);
   if (!data) {
     const err = customErr("Book doesn't has review yet", 404);
     throw err;
   }
-  res.status(200).send({ success: true, data });
+  console.log(data);
+  res.status(200).json({ success: true, data });
 });
 export const createBook = catchAsync(async (req, res) => {
   const data = req.body;
@@ -71,7 +73,7 @@ export const createBook = catchAsync(async (req, res) => {
     throw err;
   }
   const result = await add(data);
-  res.status(201).send({ success: true, result });
+  res.status(201).json({ success: true, result });
 });
 
 export const updateBook = catchAsync(async (req, res) => {
@@ -83,7 +85,7 @@ export const updateBook = catchAsync(async (req, res) => {
   }
   console.log(content);
   const data = await updateById(id, content);
-  res.status(201).send({ success: true, data });
+  res.status(201).json({ success: true, data });
 });
 
 export const deleteBook = catchAsync(async (req, res) => {
@@ -97,5 +99,5 @@ export const deleteBook = catchAsync(async (req, res) => {
     const err = customErr("Buku sedang dipinjam", 400);
     throw err;
   }
-  return res.status(204).send({ success: true, deletedBook });
+  return res.status(204).json({ success: true, deletedBook });
 });

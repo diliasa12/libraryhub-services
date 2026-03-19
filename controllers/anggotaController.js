@@ -52,7 +52,7 @@ export const updateAnggota = catchAsync(async (req, res) => {
     const err = customErr("Anggota tidak ditemukan", 404);
     throw err;
   }
-  return res.status(201).send({ success: true, data });
+  return res.status(201).json({ success: true, data });
 });
 export const deleteAnggota = catchAsync(async (req, res) => {
   const { id } = req.params;

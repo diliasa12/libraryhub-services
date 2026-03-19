@@ -1,5 +1,5 @@
 import Buku from "../models/Buku.js";
-import Peminjaman from "../models/Peminjaman.js";
+import Review from "../models/Review.js";
 export async function getAll(page, limit) {
   const skip = (page - 1) * limit;
   const data = await Buku.find().skip(skip).limit(limit);
@@ -22,7 +22,10 @@ export async function getBySearch(filter, page, limit) {
   return data;
 }
 export async function getReviewFromBookId(id) {
-  const data = await Peminjaman.find({ id_buku: id }).populate("id_buku");
+  const data = await Review.find({ id_buku: id }).populate("id_anggota");
+
+  if (data.length === 0) return null;
+
   return data;
 }
 

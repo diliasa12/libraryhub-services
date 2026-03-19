@@ -10,7 +10,7 @@ export async function getById(id) {
   return data;
 }
 export async function getRiwayat(id) {
-  const data = await Peminjaman.find({ id_anggota: id }).populate("id_anggota");
+  const data = await Peminjaman.find({ id_anggota: id }).populate("id_buku");
   if (data.length === 0) {
     return null;
   }

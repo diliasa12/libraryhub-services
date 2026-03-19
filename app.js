@@ -15,7 +15,7 @@ mongoose
   .connect("mongodb://127.0.0.1/perpus")
   .then(() => console.log("Connected"))
   .catch((err) => console.log(err.message));
-// app.use(rateLimiter);
+app.use(rateLimiter);
 app.use(logger);
 app.use("/buku", bukuRoute);
 app.use("/anggota", anggotaRoute);

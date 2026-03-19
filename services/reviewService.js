@@ -16,7 +16,7 @@ export async function add(content) {
 export async function updateReview(id, content) {
   const review = await Review.findById(id);
   console.log(review);
-  if (review.length === 0 || review.isDelete === true) return null;
+  if (!review || review.isDelete === true) return null;
   await Review.updateOne(review, content);
   const data = await Review.findById(id);
   return data;
