@@ -25,7 +25,7 @@ npm install
 
 ---
 
-## Menjalankan Seed (Data Dummy)
+## 🌱 Menjalankan Seed (Data Dummy)
 
 Seed digunakan untuk mengisi database dengan data awal secara otomatis.
 
@@ -75,25 +75,33 @@ Server berjalan di: `http://localhost:4000`
 
 ### 📚 Buku
 
-| Method | Path                | Deskripsi                                          |
-| ------ | ------------------- | -------------------------------------------------- |
-| GET    | `/buku`             | Ambil semua buku (support pagination)              |
-| GET    | `/buku/:id`         | Ambil buku berdasarkan ID                          |
-| GET    | `/buku/rekomendasi` | Rekomendasi buku berdasarkan genre favorit anggota |
-| POST   | `/buku`             | Tambah buku baru                                   |
-| PUT    | `/buku/:id`         | Update data buku                                   |
-| DELETE | `/buku/:id`         | Hapus buku (soft delete)                           |
+| Method | Path                    | Deskripsi                                                     |
+| ------ | ----------------------- | ------------------------------------------------------------- |
+| GET    | `/buku`                 | Ambil semua buku (support pagination)                         |
+| GET    | `/buku/:id`             | Ambil buku berdasarkan ID                                     |
+| GET    | `/buku?genre=:genre`    | Filter buku berdasarkan genre                                 |
+| GET    | `/buku?search=:keyword` | Cari buku berdasarkan judul atau pengarang (regex)            |
+| GET    | `/buku/:id/review`      | Ambil semua review untuk buku tertentu (populate anggota)     |
+| GET    | `/buku/rekomendasi`     | Rekomendasi buku berdasarkan genre favorit anggota            |
+| POST   | `/buku`                 | Tambah buku baru                                              |
+| PUT    | `/buku/:id`             | Update data buku                                              |
+| DELETE | `/buku/:id`             | Hapus buku (validasi: tidak boleh hapus jika sedang dipinjam) |
 
 #### Query Params — GET `/buku`
 
 ```
 GET /buku?page=1&limit=10
+GET /buku?genre=Teknologi
+GET /buku?search=clean
+GET /buku?genre=Fiksi&search=gatsby&page=1&limit=5
 ```
 
-| Param   | Default | Deskripsi               |
-| ------- | ------- | ----------------------- |
-| `page`  | `1`     | Halaman ke-             |
-| `limit` | `10`    | Jumlah data per halaman |
+| Param    | Default | Deskripsi                                     |
+| -------- | ------- | --------------------------------------------- |
+| `page`   | `1`     | Halaman ke-                                   |
+| `limit`  | `10`    | Jumlah data per halaman                       |
+| `genre`  | -       | Filter berdasarkan genre                      |
+| `search` | -       | Cari berdasarkan judul atau pengarang (regex) |
 
 #### Query Params — GET `/buku/rekomendasi`
 
@@ -125,13 +133,14 @@ GET /buku/rekomendasi?id_anggota=650000000000000000000001
 
 ### 👤 Anggota
 
-| Method | Path           | Deskripsi                    |
-| ------ | -------------- | ---------------------------- |
-| GET    | `/anggota`     | Ambil semua anggota          |
-| GET    | `/anggota/:id` | Ambil anggota berdasarkan ID |
-| POST   | `/anggota`     | Tambah anggota baru          |
-| PUT    | `/anggota/:id` | Update data anggota          |
-| DELETE | `/anggota/:id` | Hapus anggota                |
+| Method | Path                   | Deskripsi                                                  |
+| ------ | ---------------------- | ---------------------------------------------------------- |
+| GET    | `/anggota`             | Ambil semua anggota                                        |
+| GET    | `/anggota/:id`         | Ambil anggota berdasarkan ID                               |
+| GET    | `/anggota/:id/riwayat` | Ambil riwayat peminjaman anggota (populate buku)           |
+| POST   | `/anggota`             | Daftarkan anggota baru                                     |
+| PUT    | `/anggota/:id`         | Update data anggota                                        |
+| DELETE | `/anggota/:id`         | Nonaktifkan anggota (soft delete: ubah status ke nonaktif) |
 
 #### Contoh Request Body — POST/PUT `/anggota`
 
@@ -149,14 +158,22 @@ GET /buku/rekomendasi?id_anggota=650000000000000000000001
 
 ### 📋 Peminjaman
 
-| Method | Path                    | Deskripsi                                        |
-| ------ | ----------------------- | ------------------------------------------------ |
-| GET    | `/pinjam`               | Ambil semua peminjaman (populate buku & anggota) |
-| GET    | `/pinjam/:id`           | Ambil peminjaman berdasarkan ID                  |
-| GET    | `/pinjam/terlambat`     | Ambil semua peminjaman yang terlambat            |
-| POST   | `/pinjam`               | Tambah peminjaman baru                           |
-| PUT    | `/pinjam/:id/kembali`   | Proses pengembalian buku                         |
-| PUT    | `/pinjam/cek-terlambat` | Cek & update status peminjaman yang terlambat    |
+| Method | Path                       | Deskripsi                                                                           |
+| ------ | -------------------------- | ----------------------------------------------------------------------------------- |
+| GET    | `/pinjam`                  | Ambil semua data peminjaman (populate buku & anggota)                               |
+| GET    | `/pinjam/:id`              | Ambil detail peminjaman                                                             |
+| GET    | `/pinjam?status=terlambat` | Filter peminjaman berdasarkan status                                                |
+| POST   | `/pinjam`                  | Buat peminjaman baru (validasi stok, kurangi stok, set tgl_kembali_rencana +7 hari) |
+| PUT    | `/pinjam/:id/kembali`      | Proses pengembalian: hitung denda (Rp2.000/hari), tambah poin anggota, tambah stok  |
+| PUT    | `/pinjam/cek-terlambat`    | Update status semua peminjaman yang melewati tgl_kembali_rencana menjadi terlambat  |
+
+#### Query Params — GET `/pinjam`
+
+```
+GET /pinjam?status=terlambat
+GET /pinjam?status=dipinjam
+GET /pinjam?status=dikembalikan
+```
 
 #### Contoh Request Body — POST `/pinjam`
 
