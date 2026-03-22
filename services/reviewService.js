@@ -23,7 +23,7 @@ export async function updateReview(id, content) {
 }
 export async function deleteReview(id) {
   const review = await Review.findById(id);
-  if (review.length === 0) return null;
+  if (!review || review.isDelete === true) return null;
   await Review.findByIdAndUpdate({ _id: id }, { isDelete: true });
   const data = await Review.findById(id);
   console.log(data);

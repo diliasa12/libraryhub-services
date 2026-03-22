@@ -18,7 +18,7 @@ export async function getById(id) {
   const data = await Peminjaman.findById(id)
     .populate("id_buku")
     .populate("id_anggota");
-  if (data.length === 0) {
+  if (!data) {
     return null;
   }
   return data;
@@ -39,6 +39,7 @@ export async function getTerlambat(page, limit) {
 
 export async function add(content) {
   const buku = await Buku.findById(content.id_buku);
+  if (!buku) return null;
   const anggota = await Anggota.findById(content.id_anggota);
   let stokBuku = buku.stok;
 
@@ -53,6 +54,7 @@ export async function add(content) {
   await Buku.updateOne({ _id: buku._id }, { $set: { stok: stokBuku - 1 } });
 
   const newBuku = await Buku.findById(content.id_buku);
+
   if (newBuku.stok === 0) {
     await Buku.updateOne({ _id: buku._id }, { $set: { tersedia: false } });
   }

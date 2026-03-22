@@ -34,13 +34,20 @@ export async function add(data) {
   return result;
 }
 export async function updateById(id, content) {
-  console.log(typeof content);
+  const buku = await Buku.findById(id);
+  if (!buku) {
+    return null;
+  }
   await Buku.findOneAndUpdate({ _id: id }, content);
   const newRecord = await Buku.findById(id);
+
   return newRecord;
 }
 export async function deleteById(id) {
   const buku = await Buku.findById(id);
+  if (!buku) {
+    return null;
+  }
   if (buku.tersedia === false) {
     return null;
   }

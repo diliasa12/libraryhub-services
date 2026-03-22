@@ -41,7 +41,10 @@ export const deleteReviewById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await deleteReview(id);
   if (!result) {
-    const err = customErr("Anggota belum pernah pinjam buku", 400);
+    const err = customErr(
+      "Anggota belum pernah pinjam buku atau review tidak ditemukan",
+      400,
+    );
     throw err;
   }
   return res.status(200).json({ success: true, result });

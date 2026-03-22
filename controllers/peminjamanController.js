@@ -47,7 +47,10 @@ export const createPeminjaman = catchAsync(async (req, res) => {
 
   const data = await add(content);
   if (!data) {
-    const err = customErr("Gagal membuat peminjaman", 400);
+    const err = customErr(
+      "Gagal membuat peminjaman. Buku atau anggota tidak ditemukan",
+      400,
+    );
     throw err;
   }
   return res.status(200).json(data);

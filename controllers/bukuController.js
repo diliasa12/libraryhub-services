@@ -83,8 +83,12 @@ export const updateBook = catchAsync(async (req, res) => {
     const err = customErr("Book doesn't exist", 404);
     throw err;
   }
-  console.log(content);
+
   const data = await updateById(id, content);
+  if (!data) {
+    const err = customErr("Book tidak ditemukan", 404);
+    throw err;
+  }
   res.status(201).json({ success: true, data });
 });
 
@@ -96,8 +100,8 @@ export const deleteBook = catchAsync(async (req, res) => {
   }
   const deletedBook = await deleteById(id);
   if (!deletedBook) {
-    const err = customErr("Buku sedang dipinjam", 400);
+    const err = customErr("Buku tidak ada atau sedang dipinjam", 400);
     throw err;
   }
-  return res.status(204).json({ success: true, deletedBook });
+  return res.status(200).json({ success: true, deletedBook });
 });
