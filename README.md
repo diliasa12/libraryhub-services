@@ -1,10 +1,10 @@
-# 📚 Perpustakaan REST API
+# Perpustakaan REST API
 
 REST API untuk sistem manajemen perpustakaan berbasis Node.js, Express, dan MongoDB.
 
 ---
 
-## 🛠️ Teknologi
+## Teknologi
 
 - Node.js
 - Express.js
@@ -12,7 +12,7 @@ REST API untuk sistem manajemen perpustakaan berbasis Node.js, Express, dan Mong
 
 ---
 
-## ⚙️ Instalasi
+## Instalasi
 
 ```bash
 # Clone repository
@@ -25,11 +25,11 @@ npm install
 
 ---
 
-## 🌱 Menjalankan Seed (Data Dummy)
+## Menjalankan Seed (Data Dummy)
 
 Seed digunakan untuk mengisi database dengan data awal secara otomatis.
 
-> ⚠️ **Peringatan:** Seed akan **menghapus semua data lama** sebelum mengisi data baru. Jangan jalankan di production.
+> **Peringatan:** Seed akan **menghapus semua data lama** sebelum mengisi data baru. Jangan jalankan di production.
 
 ```bash
 # Jalankan seed
@@ -57,7 +57,7 @@ Data yang di-seed:
 
 ---
 
-## 🚀 Menjalankan Server
+## Menjalankan Server
 
 ```bash
 # Development (dengan nodemon)
@@ -71,9 +71,9 @@ Server berjalan di: `http://localhost:4000`
 
 ---
 
-## 📖 Dokumentasi Endpoint
+## Dokumentasi Endpoint
 
-### 📚 Buku
+### Buku
 
 | Method | Path                    | Deskripsi                                                     |
 | ------ | ----------------------- | ------------------------------------------------------------- |
@@ -131,7 +131,7 @@ GET /buku/rekomendasi?id_anggota=650000000000000000000001
 
 ---
 
-### 👤 Anggota
+### Anggota
 
 | Method | Path                   | Deskripsi                                                  |
 | ------ | ---------------------- | ---------------------------------------------------------- |
@@ -156,7 +156,7 @@ GET /buku/rekomendasi?id_anggota=650000000000000000000001
 
 ---
 
-### 📋 Peminjaman
+### Peminjaman
 
 | Method | Path                       | Deskripsi                                                                           |
 | ------ | -------------------------- | ----------------------------------------------------------------------------------- |
@@ -194,7 +194,7 @@ GET /pinjam?status=dikembalikan
 
 ---
 
-### ⭐ Review
+### Review
 
 | Method | Path          | Deskripsi                                          |
 | ------ | ------------- | -------------------------------------------------- |
@@ -214,11 +214,11 @@ GET /pinjam?status=dikembalikan
 }
 ```
 
-> ⚠️ **Validasi:** Anggota hanya bisa mereview buku yang sudah pernah dipinjam dan dikembalikan. Satu anggota hanya bisa memberi satu review per buku.
+> **Validasi:** Anggota hanya bisa mereview buku yang sudah pernah dipinjam dan dikembalikan. Satu anggota hanya bisa memberi satu review per buku.
 
 ---
 
-### 📊 Statistik
+### Statistik
 
 | Method | Path         | Deskripsi                            |
 | ------ | ------------ | ------------------------------------ |
@@ -246,7 +246,7 @@ GET /pinjam?status=dikembalikan
 
 ---
 
-## 📁 Struktur Folder
+## Struktur Folder
 
 ```
 ├── models/
@@ -286,11 +286,11 @@ GET /pinjam?status=dikembalikan
 
 ---
 
-## 🔢 Genre yang Tersedia
+## Genre yang Tersedia
 
 `Fiksi` `NonFiksi` `Sains` `Sejarah` `Teknologi` `Lainnya`
 
-## 📌 Status Peminjaman
+## Status Peminjaman
 
 | Status         | Keterangan                             |
 | -------------- | -------------------------------------- |
@@ -298,7 +298,7 @@ GET /pinjam?status=dikembalikan
 | `dikembalikan` | Buku sudah dikembalikan tepat waktu    |
 | `terlambat`    | Buku dikembalikan melebihi batas waktu |
 
-## 💰 Perhitungan Denda
+## Perhitungan Denda
 
 Denda dihitung berdasarkan jumlah hari keterlambatan:
 
